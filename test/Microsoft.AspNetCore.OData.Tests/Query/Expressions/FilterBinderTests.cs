@@ -1360,6 +1360,14 @@ public class FilterBinderTests
     }
 
     [Theory]
+    [InlineData("totalseconds(NullableDiscontinuedSince) gt 60", "$it => (Convert($it.NullableDiscontinuedSince.Value.TotalSeconds) > 60)")]
+    public void DateFunctions_TotalSecondsFunction_Nullable(string filter, string expression)
+    {
+        // Arrange & Act & Assert
+        BindFilterAndVerify<Product>(filter, expression, NotTesting);
+    }
+
+    [Theory]
     [InlineData("totalseconds(NonNullableDiscontinuedDate sub NonNullableDiscontinuedDate) gt 0",
         "$it => (Convert(($it.NonNullableDiscontinuedDate - $it.NonNullableDiscontinuedDate).TotalSeconds) > 0)")]
     public void DateFunctions_TotalSecondsFunction_DateTimeOffsetSubtraction(string filter, string expression)

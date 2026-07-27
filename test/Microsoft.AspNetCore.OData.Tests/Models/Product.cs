@@ -37,6 +37,7 @@ public class Product
 
     public DateTimeOffset DiscontinuedOffset { get; set; }
     public TimeSpan DiscontinuedSince { get; set; }
+    public TimeSpan? NullableDiscontinuedSince { get; set; }
 
     public Date DateProperty { get; set; }
     public Date? NullableDateProperty { get; set; }

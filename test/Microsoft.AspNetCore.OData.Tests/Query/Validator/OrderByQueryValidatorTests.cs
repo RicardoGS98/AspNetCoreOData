@@ -108,6 +108,44 @@ public class OrderByQueryValidatorTests
     }
 
     [Fact]
+    public void ValidateOrderByQueryValidator_ThrowsNotAllowedException_ForNotAllowedTotalSecondsFunction()
+    {
+        // Arrange
+        ODataQueryContext productContext = CreateProductContextForOrderBy();
+        ODataValidationSettings settings = new ODataValidationSettings
+        {
+            AllowedFunctions = AllowedFunctions.AllFunctions & ~AllowedFunctions.TotalSeconds
+        };
+
+        // Act & Assert
+        ExceptionAssert.Throws<ODataException>(
+            () => _validator.Validate(new OrderByQueryOption("totalseconds(DiscontinuedSince)", productContext), settings),
+            "Function 'totalseconds' is not allowed. To allow it, set the 'AllowedFunctions' property on EnableQueryAttribute or QueryValidationSettings.");
+    }
+
+    [Fact]
+    public void ValidateOrderByQueryValidator_NoException_ForTotalSecondsFunction_OnAllDateTimeFunctions()
+    {
+        // Arrange
+        ODataQueryContext productContext = CreateProductContextForOrderBy();
+        ODataValidationSettings settings = new ODataValidationSettings
+        {
+            AllowedFunctions = AllowedFunctions.AllDateTimeFunctions
+        };
+
+        // Act & Assert
+        ExceptionAssert.DoesNotThrow(
+            () => _validator.Validate(new OrderByQueryOption("totalseconds(DiscontinuedSince)", productContext), settings));
+    }
+
+    private static ODataQueryContext CreateProductContextForOrderBy()
+    {
+        ODataQueryContext context = ValidationTestHelper.CreateDerivedProductsContext();
+        context.DefaultQueryConfigurations.EnableOrderBy = true;
+        return context;
+    }
+
+    [Fact]
     public void ValidateOrderByQueryValidator_ThrowsNotAllowedException_ForNotAllowedAndSortableUnlimitedProperty()
     {
         // Arrange
